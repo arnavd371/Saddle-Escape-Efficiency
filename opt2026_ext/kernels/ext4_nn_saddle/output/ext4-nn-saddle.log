@@ -1,0 +1,30 @@
+[{"stream_name":"stdout","time":8.237994827,"data":"[ext4] device=cuda  torch=2.10.0+cu128  numpy=2.0.2  scipy=1.16.3\n"}
+,{"stream_name":"stdout","time":8.238223027,"data":"\n"}
+,{"stream_name":"stdout","time":8.238237842,"data":"=== Ext4: first real (non-benchmark) loss landscape -- XOR MLP, 9-dim parameter space ===\n"}
+,{"stream_name":"stdout","time":8.238242532,"data":"Saddle constructed via tied-unit symmetry (see xor_network.py docstring for why global\n"}
+,{"stream_name":"stdout","time":8.238246562,"data":"multi-start fsolve fails on this saturating landscape).\n"}
+,{"stream_name":"stdout","time":8.927975852,"data":"\n"}
+,{"stream_name":"stdout","time":8.928011199,"data":"Fixed (CPU-verified) saddle recomputed on cuda: loss=0.693147  lambda_min=-0.015189  lambda_max=0.462421  r_curv=8.1140\n"}
+,{"stream_name":"stdout","time":8.92801608,"data":"  ACCEPTED AS SADDLE (lmin\u003c-1e-4 and lmax\u003e1e-4): True\n"}
+,{"stream_name":"stdout","time":8.928020762,"data":"  (CPU reference values: loss=0.693147 lambda_min=-0.015189 lambda_max=0.462421 -- comparing to catch any residual device-dependent eigenvalue drift)\n"}
+,{"stream_name":"stdout","time":8.940526345,"data":"\n"}
+,{"stream_name":"stdout","time":8.94056194,"data":"Running trial grid: 7 optimizers x 6 LRs = 42 configs, N=200 trials, T=200 steps\n"}
+,{"stream_name":"stdout","time":68.084379444,"data":"  GD_fixed done. (59.1s elapsed)\n"}
+,{"stream_name":"stdout","time":121.887208873,"data":"  Adam done. (112.9s elapsed)\n"}
+,{"stream_name":"stdout","time":175.711907914,"data":"  RMSProp done. (166.8s elapsed)\n"}
+,{"stream_name":"stdout","time":229.264895679,"data":"  AdaGrad done. (220.3s elapsed)\n"}
+,{"stream_name":"stdout","time":283.009153946,"data":"  AdamW done. (274.1s elapsed)\n"}
+,{"stream_name":"stdout","time":335.996129568,"data":"  SGD_Nesterov done. (327.1s elapsed)\n"}
+,{"stream_name":"stdout","time":388.539606265,"data":"  Lion done. (379.6s elapsed)\n"}
+,{"stream_name":"stderr","time":388.540286649,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":388.540335932,"data":"  File \"/kaggle/src/script.py\", line 902, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":388.540714362,"data":"    'N_PARAMS': N_PARAMS, 'diag': diag}, f)\n"}
+,{"stream_name":"stderr","time":388.540813079,"data":"                                  ^^^^\n"}
+,{"stream_name":"stderr","time":388.540989333,"data":"NameError: name 'diag' is not defined\n"}
+,{"stream_name":"stderr","time":392.630734749,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":392.63077807,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":392.856490244,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":392.856517587,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":393.455588668,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":394.737981549,"data":"[NbConvertApp] Writing 472087 bytes to __results__.html\n"}
+]

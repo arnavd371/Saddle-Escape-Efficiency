@@ -81,7 +81,7 @@ for o in OPTS_EXT:
 with open(os.path.join(RAWDIR, 'ext4_xor_raw_trials.pkl'), 'wb') as f:
     pickle.dump({'DATA': DATA, 'geom': (s.cpu().numpy(), vmin_t[0].cpu().numpy(), r_curv, f_s, lmin_v),
                  'VAR': VAR, 'OPTS_EXT': OPTS_EXT, 'LRS': LRS, 'SEED': SEED, 'N': N, 'TMAX': TMAX,
-                 'N_PARAMS': N_PARAMS, 'diag': diag}, f)
+                 'N_PARAMS': N_PARAMS, 'theta_saddle': _THETA_SADDLE}, f)
 print(f'Raw trial data saved to {RAWDIR}/ext4_xor_raw_trials.pkl')
 
 # ---------------------------------------------------------------- 3. SEE tables
