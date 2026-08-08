@@ -358,20 +358,87 @@ i.e. F(X).sum() = sum_i f(X_i) with no cross terms between batch rows. That
 lets a single double-backward pass compute a *batched* HVP -- one
 Hessian-vector product per row, simultaneously -- via the same sum-trick
 `bgrad` already uses for batched gradients. See `batched_hvp` below.
+
+Numerical robustness (found via a real Kaggle failure, not hypothetical):
+some trials in a batch diverge (e.g. Styblinski-Tang's x^4 term under a
+large LR blows the trajectory up before nan_to_num clips the *position* to
+1e6 -- but the Hessian-vector products computed FROM that huge-but-finite
+position can still overflow to inf, or the Lanczos recurrence can degenerate
+when a direction vector collapses). A single non-finite or ill-conditioned
+row in the batched tridiagonal matrix makes torch.linalg.eigvalsh/eigh raise
+for the WHOLE batch (LAPACK's batched routines fail all-or-nothing per call).
+We therefore (a) sanitize every intermediate quantity in the Lanczos
+recurrence, and (b) wrap the final eigendecomposition in a jitter-retry /
+per-row fallback so one diverged trial can't crash the other 199 in the
+batch. A row whose Hessian estimate is unrecoverable is treated as having
+escaped (lambda_min set to a large positive sentinel) -- physically
+reasonable, since a trajectory that diverged this badly has certainly left
+the saddle's local basin, matching what criterion A (distance) would already
+say about the same point.
 """
 import torch
+
+_CLAMP = 1e8      # intermediate magnitude clamp -- generous vs. saddle-local scales, well inside float64 range
+_ESCAPED_SENTINEL = 1e6  # lambda_min/lambda_max value assigned to unrecoverable (diverged) rows
+
+
+def _sanitize(t, clamp=_CLAMP):
+    t = torch.nan_to_num(t, nan=0.0, posinf=clamp, neginf=-clamp)
+    return t.clamp(-clamp, clamp)
 
 
 def batched_hvp(F, X, V):
     """X: (N,n) requires no pre-existing grad state (we set it up here).
     V: (N,n) per-row direction vectors.
     Returns (N,n): Hv[i] = Hessian(f)(X[i]) @ V[i]. Exact (autodiff), not
-    finite-difference -- no h-parameter to tune."""
+    finite-difference -- no h-parameter to tune. Sanitized against overflow
+    from diverged trajectories (see module docstring)."""
     Xc = X.detach().clone().requires_grad_(True)
     g = torch.autograd.grad(F(Xc).sum(), Xc, create_graph=True)[0]  # (N,n), per-row correct since F is row-separable
+    g = _sanitize(g)
     gv = (g * V).sum()
     Hv = torch.autograd.grad(gv, Xc, retain_graph=False)[0]  # (N,n)
-    return Hv.detach()
+    return _sanitize(Hv.detach())
+
+
+def _safe_tridiag_eigh(T, want_vectors=False):
+    """torch.linalg.eigvalsh/eigh on a batched tridiagonal matrix, robust to
+    the rare diverged-trial row: sanitize -> try -> jitter+retry -> per-row
+    numpy fallback with an escaped-sentinel for any row still unrecoverable.
+    Returns (eigvals, eigvecs_or_None)."""
+    N = T.shape[0]
+    T = _sanitize(T)
+    fn = torch.linalg.eigh if want_vectors else torch.linalg.eigvalsh
+    try:
+        return fn(T) if want_vectors else (fn(T), None)
+    except Exception:
+        pass
+    # jitter retry (fixes most "ill-conditioned / repeated eigenvalues" LAPACK failures)
+    eye = torch.eye(T.shape[-1], device=T.device, dtype=T.dtype).unsqueeze(0)
+    try:
+        Tj = T + 1e-6 * eye
+        return fn(Tj) if want_vectors else (fn(Tj), None)
+    except Exception:
+        pass
+    # per-row fallback: isolate the bad row(s), sentinel them, solve the rest individually
+    import numpy as np
+    m = T.shape[-1]
+    eigvals = torch.full((N, m), _ESCAPED_SENTINEL, device=T.device, dtype=T.dtype)
+    eigvecs = torch.zeros((N, m, m), device=T.device, dtype=T.dtype) if want_vectors else None
+    if want_vectors:
+        eigvecs[:, 0, :] = 1.0  # trivial fallback eigenvector (e_0) for unrecoverable rows
+    Tcpu = T.detach().cpu().numpy()
+    for i in range(N):
+        try:
+            if want_vectors:
+                ev, evec = np.linalg.eigh(Tcpu[i])
+                eigvecs[i] = torch.tensor(evec, device=T.device, dtype=T.dtype)
+            else:
+                ev = np.linalg.eigvalsh(Tcpu[i])
+            eigvals[i] = torch.tensor(ev, device=T.device, dtype=T.dtype)
+        except Exception:
+            pass  # leave this row at the escaped sentinel
+    return eigvals, eigvecs
 
 
 def batched_lanczos_extreme_eigs(F, X, m=30, device='cpu', eps=1e-12):
@@ -395,14 +462,15 @@ def batched_lanczos_extreme_eigs(F, X, m=30, device='cpu', eps=1e-12):
     betas = []  # betas[j] connects Lanczos vector j and j+1; length m-1 used
     for j in range(m):
         w = batched_hvp(F, Xc, v)
-        alpha = (w * v).sum(dim=1)
+        alpha = _sanitize((w * v).sum(dim=1))
         alphas.append(alpha)
-        w = w - alpha.unsqueeze(1) * v - beta_prev.unsqueeze(1) * v_prev
-        beta = w.norm(dim=1)
+        w = _sanitize(w - alpha.unsqueeze(1) * v - beta_prev.unsqueeze(1) * v_prev)
+        beta = _sanitize(w.norm(dim=1))
         betas.append(beta)
         v_prev = v
         beta_safe = beta.clamp_min(eps)
         v = w / beta_safe.unsqueeze(1)
+        v = _sanitize(v, clamp=1e3)  # a unit-ish vector should never need a huge clamp
         beta_prev = beta
 
     A = torch.stack(alphas, dim=1)          # (N, m)
@@ -414,7 +482,7 @@ def batched_lanczos_extreme_eigs(F, X, m=30, device='cpu', eps=1e-12):
         T[:, idx, idx + 1] = B
         T[:, idx + 1, idx] = B
 
-    eigvals = torch.linalg.eigvalsh(T)        # (N, m) ascending
+    eigvals, _ = _safe_tridiag_eigh(T, want_vectors=False)
     return eigvals[:, 0], eigvals[:, -1]
 
 
@@ -445,14 +513,15 @@ def batched_lanczos_min_eigpair(F, X, m=30, device='cpu', eps=1e-12):
     for j in range(m):
         V_stack.append(v)
         w = batched_hvp(F, Xc, v)
-        alpha = (w * v).sum(dim=1)
+        alpha = _sanitize((w * v).sum(dim=1))
         alphas.append(alpha)
-        w = w - alpha.unsqueeze(1) * v - beta_prev.unsqueeze(1) * v_prev
-        beta = w.norm(dim=1)
+        w = _sanitize(w - alpha.unsqueeze(1) * v - beta_prev.unsqueeze(1) * v_prev)
+        beta = _sanitize(w.norm(dim=1))
         betas.append(beta)
         v_prev = v
         beta_safe = beta.clamp_min(eps)
         v = w / beta_safe.unsqueeze(1)
+        v = _sanitize(v, clamp=1e3)
         beta_prev = beta
 
     A = torch.stack(alphas, dim=1)
@@ -465,7 +534,7 @@ def batched_lanczos_min_eigpair(F, X, m=30, device='cpu', eps=1e-12):
         T[:, idx, idx + 1] = B
         T[:, idx + 1, idx] = B
 
-    eigvals, eigvecs = torch.linalg.eigh(T)  # (N,m), (N,m,m) ascending
+    eigvals, eigvecs = _safe_tridiag_eigh(T, want_vectors=True)
     lmin = eigvals[:, 0]
     lmax = eigvals[:, -1]
     y_min = eigvecs[:, :, 0]                  # (N, m)

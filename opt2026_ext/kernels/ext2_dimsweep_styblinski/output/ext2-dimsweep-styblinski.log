@@ -1,0 +1,24 @@
+[{"stream_name":"stdout","time":17.928640932,"data":"[ext2] device=cuda  torch=2.10.0+cu128  numpy=2.0.2  scipy=1.16.3\n"}
+,{"stream_name":"stdout","time":17.929576685,"data":"=== Ext2 dimensionality sweep: Styblinski across n=[2, 5, 10, 25, 50] ===\n"}
+,{"stream_name":"stdout","time":17.929581684,"data":"(checkpointing after every dimension -- partial progress survives a crash or timeout on a later dim)\n"}
+,{"stream_name":"stdout","time":17.929584264,"data":"\n"}
+,{"stream_name":"stdout","time":17.929586597,"data":"--- Styblinski n=2 ---\n"}
+,{"stream_name":"stdout","time":99.669911524,"data":"  saddle verified: 3 candidate(s); lambda_min=-15.853 lambda_max=29.270 r_curv=0.2512  (81.7s)\n"}
+,{"stream_name":"stderr","time":110.439276099,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":110.43938445,"data":"  File \"/kaggle/src/script.py\", line 674, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":110.439551725,"data":"    e, stp = run_config_nd(F, geom, o, actual_lr, make_opt, device=device, N=N, TMAX=TMAX,\n"}
+,{"stream_name":"stderr","time":110.439724772,"data":"             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":110.439783743,"data":"  File \"/kaggle/src/script.py\", line 584, in run_config_nd\n"}
+,{"stream_name":"stderr","time":110.440043629,"data":"    lmin, _ = batched_lanczos_extreme_eigs(F, Xd, m=m, device=device)\n"}
+,{"stream_name":"stderr","time":110.44034015,"data":"              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":110.440354039,"data":"  File \"/kaggle/src/script.py\", line 417, in batched_lanczos_extreme_eigs\n"}
+,{"stream_name":"stderr","time":110.44062873,"data":"    eigvals = torch.linalg.eigvalsh(T)        # (N, m) ascending\n"}
+,{"stream_name":"stderr","time":110.440690985,"data":"              ^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":110.440771622,"data":"torch._C._LinAlgError: linalg.eigh: (Batch element 0): The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated eigenvalues (error code: 1).\n"}
+,{"stream_name":"stderr","time":117.032826762,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":117.032861497,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":117.457983816,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":117.458032631,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":118.186045583,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":120.010252991,"data":"[NbConvertApp] Writing 434491 bytes to __results__.html\n"}
+]
