@@ -1,0 +1,48 @@
+[{"stream_name":"stdout","time":10.684143055,"data":"[ext2] device=cuda  torch=2.10.0+cu128  numpy=2.0.2  scipy=1.16.3\n"}
+,{"stream_name":"stdout","time":10.684541452,"data":"=== Ext2 dimensionality sweep: Ackley across n=[2, 5, 10, 25, 50] ===\n"}
+,{"stream_name":"stdout","time":10.684552132,"data":"(checkpointing after every dimension -- partial progress survives a crash or timeout on a later dim)\n"}
+,{"stream_name":"stdout","time":10.684556523,"data":"\n"}
+,{"stream_name":"stdout","time":10.684578984,"data":"--- Ackley n=2 ---\n"}
+,{"stream_name":"stdout","time":11.845108644,"data":"  saddle verified: 3 candidate(s); lambda_min=-19.026 lambda_max=14.575 r_curv=0.2293  (1.2s)\n"}
+,{"stream_name":"stdout","time":74.971338161,"data":"  trial grid done (7x6=42 configs, 64.3s total for this dim)\n"}
+,{"stream_name":"stdout","time":74.989729091,"data":"  n=2: A-B rho=-0.071   B-D rho=+0.964   (n_optimizers=7)\n"}
+,{"stream_name":"stdout","time":75.878542472,"data":"  n=2: Kendall W=0.560  95% CI [0.139,0.811]\n"}
+,{"stream_name":"stdout","time":75.87859456,"data":"  --- n=2 checkpoint written. total elapsed 1.1 min ---\n"}
+,{"stream_name":"stdout","time":75.878602796,"data":"\n"}
+,{"stream_name":"stdout","time":75.878609296,"data":"--- Ackley n=5 ---\n"}
+,{"stream_name":"stdout","time":76.659012795,"data":"  saddle verified: 3 candidate(s); lambda_min=-5.412 lambda_max=3.768 r_curv=0.4298  (0.8s)\n"}
+,{"stream_name":"stdout","time":196.82696133,"data":"  trial grid done (7x6=42 configs, 120.9s total for this dim)\n"}
+,{"stream_name":"stdout","time":196.837794566,"data":"  n=5: A-B rho=-0.071   B-D rho=+1.000   (n_optimizers=7)\n"}
+,{"stream_name":"stdout","time":197.668423223,"data":"  n=5: Kendall W=0.562  95% CI [0.116,0.835]\n"}
+,{"stream_name":"stdout","time":197.66845405,"data":"  --- n=5 checkpoint written. total elapsed 3.1 min ---\n"}
+,{"stream_name":"stdout","time":197.668460048,"data":"\n"}
+,{"stream_name":"stdout","time":197.66846498,"data":"--- Ackley n=10 ---\n"}
+,{"stream_name":"stdout","time":198.494946355,"data":"  saddle verified: 3 candidate(s); lambda_min=-3.383 lambda_max=3.502 r_curv=0.5437  (0.8s)\n"}
+,{"stream_name":"stdout","time":429.385685756,"data":"  trial grid done (7x6=42 configs, 231.7s total for this dim)\n"}
+,{"stream_name":"stdout","time":429.396890398,"data":"  n=10: A-B rho=+0.214   B-D rho=+1.000   (n_optimizers=7)\n"}
+,{"stream_name":"stdout","time":430.262088562,"data":"  n=10: Kendall W=0.652  95% CI [0.161,0.893]\n"}
+,{"stream_name":"stdout","time":430.262118662,"data":"  --- n=10 checkpoint written. total elapsed 7.0 min ---\n"}
+,{"stream_name":"stdout","time":430.262125659,"data":"\n"}
+,{"stream_name":"stdout","time":430.262130464,"data":"--- Ackley n=25 ---\n"}
+,{"stream_name":"stdout","time":432.156862365,"data":"  saddle verified: 3 candidate(s); lambda_min=-1.649 lambda_max=1.716 r_curv=0.7788  (1.9s)\n"}
+,{"stream_name":"stdout","time":983.762367889,"data":"  trial grid done (7x6=42 configs, 553.5s total for this dim)\n"}
+,{"stream_name":"stdout","time":983.773150494,"data":"  n=25: A-B rho=+0.788   B-D rho=+1.000   (n_optimizers=7)\n"}
+,{"stream_name":"stdout","time":984.629732541,"data":"  n=25: Kendall W=0.828  95% CI [0.402,0.894]\n"}
+,{"stream_name":"stdout","time":984.629776841,"data":"  --- n=25 checkpoint written. total elapsed 16.2 min ---\n"}
+,{"stream_name":"stdout","time":984.629783691,"data":"\n"}
+,{"stream_name":"stdout","time":984.62978803,"data":"--- Ackley n=50 ---\n"}
+,{"stream_name":"stdout","time":994.604074618,"data":"  saddle verified: 3 candidate(s); lambda_min=-0.767 lambda_max=0.801 r_curv=1.1421  (10.0s)\n"}
+,{"stream_name":"stdout","time":1652.493266162,"data":"  trial grid done (7x6=42 configs, 667.9s total for this dim)\n"}
+,{"stream_name":"stdout","time":1652.504600149,"data":"  n=50: A-B rho=+0.867   B-D rho=+1.000   (n_optimizers=7)\n"}
+,{"stream_name":"stdout","time":1653.360159503,"data":"  n=50: Kendall W=0.846  95% CI [0.403,0.911]\n"}
+,{"stream_name":"stdout","time":1653.360200435,"data":"  --- n=50 checkpoint written. total elapsed 27.4 min ---\n"}
+,{"stream_name":"stdout","time":1653.360205485,"data":"\n"}
+,{"stream_name":"stdout","time":1653.360209254,"data":"Ackley dimensionality sweep complete. Total: 27.4 min\n"}
+,{"stream_name":"stdout","time":1653.360213803,"data":"Files in /kaggle/working/results/ (ext2_Ackley_*.csv) and /kaggle/working/results/raw/ (per-dim raw pickles)\n"}
+,{"stream_name":"stderr","time":1658.067834368,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1658.067910646,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1658.376535435,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1658.376596611,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1659.089531818,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1660.485184441,"data":"[NbConvertApp] Writing 434483 bytes to __results__.html\n"}
+]
