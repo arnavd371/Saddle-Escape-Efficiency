@@ -28,8 +28,24 @@ print(f'\n=== Ext4: first real (non-benchmark) loss landscape -- XOR MLP, {N_PAR
 print('Saddle constructed via tied-unit symmetry (see xor_network.py docstring for why global')
 print('multi-start fsolve fails on this saturating landscape).')
 
-# ---------------------------------------------------------------- 1. construct + verify the saddle
-s, diag = find_xor_saddle(seed=0, lr=0.5, steps=4000, device=device)
+# ---------------------------------------------------------------- 1. saddle: CPU-verified fixed coordinates
+# The saddle construction (find_xor_saddle) is a fragile 4000-step iterative
+# tied-subspace gradient descent -- of 6 random seeds tried locally, only
+# seed=2 converges to the clean saddle (loss=ln(2), lambda_min=-0.0152); the
+# other 5 land in a degenerate attractor (lambda_min=lambda_max~0, huge
+# param magnitude). A first Kaggle GPU run (kernel version 1) reproduced
+# that SAME degenerate failure even with seed=2 -- GPU/CPU float64
+# non-determinism compounded over 4000 steps landed in a different basin
+# than the CPU run did (this is exactly the class of non-determinism the
+# baseline README already documents as a known limitation). Rather than gamble
+# on construction being GPU-reproducible, the fragile part (construction) is
+# done once on CPU and hardcoded here; only the trial-grid forward simulation
+# (which every other kernel in this project already does successfully on
+# GPU from a fixed starting point) runs on GPU.
+_THETA_SADDLE = [-1.0894063429134349e-15, -1.0894063429134349e-15, -1.0894063429134349e-15,
+                 -1.0894063429134349e-15, -0.11738607773232793, -0.11738607773232793,
+                 -0.5271470428799861, -0.5271470428799861, -0.12319411588445499]
+s = torch.tensor(_THETA_SADDLE, device=device)
 lmin_t, lmax_t, vmin_t = batched_lanczos_min_eigpair(F_xor_loss, s[None], m=N_PARAMS, device=device)
 lmin_v, lmax_v = lmin_t.item(), lmax_t.item()
 r_curv = 1 / np.sqrt(abs(lmin_v))
@@ -37,15 +53,16 @@ f_s = F_xor_loss(s[None])[0].item()
 geom = (s, vmin_t[0], r_curv, f_s, lmin_v)
 
 is_saddle = lmin_v < -1e-4 and lmax_v > 1e-4
-print(f'\nConstructed saddle: loss={f_s:.6f}  lambda_min={lmin_v:.6f}  lambda_max={lmax_v:.6f}  r_curv={r_curv:.4f}')
-print(f'  fsolve: ier={diag["fsolve_ier"]} grad_norm={diag["grad_norm"]:.2e} max|param|={diag["max_abs_param"]:.3f}')
+print(f'\nFixed (CPU-verified) saddle recomputed on {device}: loss={f_s:.6f}  lambda_min={lmin_v:.6f}  '
+      f'lambda_max={lmax_v:.6f}  r_curv={r_curv:.4f}')
 print(f'  ACCEPTED AS SADDLE (lmin<-1e-4 and lmax>1e-4): {is_saddle}')
+print(f'  (CPU reference values: loss=0.693147 lambda_min=-0.015189 lambda_max=0.462421 -- '
+      f'comparing to catch any residual device-dependent eigenvalue drift)')
 if not is_saddle:
-    raise RuntimeError('Constructed point failed saddle acceptance -- do not proceed with trial grid.')
+    raise RuntimeError('Fixed saddle point failed acceptance on this device -- do not proceed with trial grid.')
 
 pd.DataFrame([{'loss': f_s, 'lambda_min': lmin_v, 'lambda_max': lmax_v, 'r_curv': r_curv,
-               'fsolve_ier': diag['fsolve_ier'], 'grad_norm': diag['grad_norm'],
-               'max_abs_param': diag['max_abs_param'], 'n_params': N_PARAMS}]
+               'n_params': N_PARAMS, 'device': str(device)}]
              ).to_csv(os.path.join(OUTDIR, 'ext4_xor_saddle_report.csv'), index=False)
 
 # ---------------------------------------------------------------- 2. trial grid: all 7 optimizers x 6 LRs x 4 criteria

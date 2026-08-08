@@ -1,0 +1,20 @@
+[{"stream_name":"stdout","time":9.602158996,"data":"[ext4] device=cuda  torch=2.10.0+cu128  numpy=2.0.2  scipy=1.16.3\n"}
+,{"stream_name":"stdout","time":9.602548805,"data":"\n"}
+,{"stream_name":"stdout","time":9.602569192,"data":"=== Ext4: first real (non-benchmark) loss landscape -- XOR MLP, 9-dim parameter space ===\n"}
+,{"stream_name":"stdout","time":9.602574359,"data":"Saddle constructed via tied-unit symmetry (see xor_network.py docstring for why global\n"}
+,{"stream_name":"stdout","time":9.602577865,"data":"multi-start fsolve fails on this saturating landscape).\n"}
+,{"stream_name":"stdout","time":13.649595845,"data":"\n"}
+,{"stream_name":"stdout","time":13.649637773,"data":"Constructed saddle: loss=0.477385  lambda_min=0.000000  lambda_max=0.500000  r_curv=178920837.6345\n"}
+,{"stream_name":"stdout","time":13.649642496,"data":"  fsolve: ier=5 grad_norm=9.61e-17 max|param|=21.798\n"}
+,{"stream_name":"stdout","time":13.649660095,"data":"  ACCEPTED AS SADDLE (lmin\u003c-1e-4 and lmax\u003e1e-4): False\n"}
+,{"stream_name":"stderr","time":13.649820158,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":13.649848492,"data":"  File \"/kaggle/src/script.py\", line 862, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":13.650138627,"data":"    raise RuntimeError('Constructed point failed saddle acceptance -- do not proceed with trial grid.')\n"}
+,{"stream_name":"stderr","time":13.650207503,"data":"RuntimeError: Constructed point failed saddle acceptance -- do not proceed with trial grid.\n"}
+,{"stream_name":"stderr","time":17.691511691,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":17.691544484,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":17.956644195,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":17.956682558,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":18.589072578,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":20.025298903,"data":"[NbConvertApp] Writing 470851 bytes to __results__.html\n"}
+]
