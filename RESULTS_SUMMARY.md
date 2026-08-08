@@ -24,6 +24,57 @@ where it breaks down and why") rather than a caveat buried in a footnote.
 
 ---
 
+## Paper structure recommendation for the Sept 4 submission
+
+Given the 3.5-week timeline, not everything documented in this file belongs
+in the main paper with equal weight. Recommended structure:
+
+**Main paper (target: 4-8 pages):**
+1. Core finding (baseline, unchanged) + Finding 1/2 replication at n=7
+   (short -- these hold, they don't need much space)
+2. **Finding 3, expanded**: B-D partially confirmed, Styblinski
+   counterexample presented as a genuine contribution, not a caveat
+   (see framing note above)
+3. **Mechanistic proposition** (`opt2026_ext/PROPOSITION.md`): why RMSProp
+   wins under criterion A regardless of curvature -- this is what upgrades
+   the paper from "interesting observation" to "we understand why"
+4. **NN saddle experiment** (`opt2026_ext/kernels/ext4_nn_saddle/`, results
+   pending as of this writing -- see the dedicated section below once
+   available): does the criterion-dependence pattern replicate on a real
+   (if tiny) network's loss landscape, not just benchmark functions
+5. **Practical Implications** (`opt2026_ext/PRACTICAL_IMPLICATIONS.md`):
+   half a page, decision flowchart, serves the workshop's practitioner
+   audience directly
+6. Lion LR-convention artifact (short paragraph -- it's a clean, self-
+   contained result: the paper-convention scaled LR substantially explains
+   Lion's poor apparent performance)
+
+**Dimensionality sweep: compress to one figure + one paragraph in the main
+text**, not a full section. The headline (B-D holds for Ackley/Rastrigin,
+breaks for Styblinski, flat across all dimensions tested) is stated once;
+`results/fig7_dimensionality_sweep.png` and Table V go in main text or an
+appendix depending on final page budget, but don't re-derive the mechanism
+at length -- it's already covered by the Finding-3 discussion above.
+
+**Ext 3 (curvature sweep): move to an appendix**, framed explicitly as
+inconclusive -- non-monotonic W-vs-k, correlation CI crosses zero,
+underpowered per-W-estimate (not a bare null result, see SANITY_CHECKS.md
+Check 2) -- "we also explored this, here's why it's inconclusive, future
+work." Do not present it as a main contribution; a null result with wide
+CIs presented as headline material weakens the paper's overall claims.
+
+**Priority order if time runs short:** the NN experiment carries the most
+execution uncertainty and was started first for that reason (see
+SANITY_CHECKS.md-adjacent work in `opt2026_ext/verification/` for the real
+debugging this required: global saddle-search fails on saturating
+activations, required a constructive symmetry-based approach instead). If
+it fails or is inconclusive, the paper is still submittable as: core finding
++ Lion artifact + Styblinski counterexample + mechanistic proposition +
+practical implications, in 4 clean pages -- a solid poster. The NN result,
+if it lands cleanly, is what pushes toward a stronger poster or an oral.
+
+---
+
 ## What changed
 
 | | Baseline | Extension |
