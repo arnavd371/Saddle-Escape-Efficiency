@@ -38,10 +38,12 @@ in the main paper with equal weight. Recommended structure:
 3. **Mechanistic proposition** (`opt2026_ext/PROPOSITION.md`): why RMSProp
    wins under criterion A regardless of curvature -- this is what upgrades
    the paper from "interesting observation" to "we understand why"
-4. **NN saddle experiment** (`opt2026_ext/kernels/ext4_nn_saddle/`, results
-   pending as of this writing -- see the dedicated section below once
-   available): does the criterion-dependence pattern replicate on a real
-   (if tiny) network's loss landscape, not just benchmark functions
+4. **NN saddle experiment** (`opt2026_ext/kernels/ext4_nn_saddle/`, complete
+   -- see "Extension 4" below): partial replication -- RMSProp's curvature-
+   independent criterion-A dominance replicates cleanly (independent
+   confirmation of the proposition), but the Ackley/Rastrigin-style A-B
+   rank inversion does not; this network's saddle shows higher overall
+   cross-criterion concordance (W=0.84) than any benchmark function tested
 5. **Practical Implications** (`opt2026_ext/PRACTICAL_IMPLICATIONS.md`):
    half a page, decision flowchart, serves the workshop's practitioner
    audience directly
@@ -226,6 +228,45 @@ accepted, gradient exactly zero, finite-difference cross-check agrees to
   observed across the sweep), not to having too few k-values -- 18 conditions
   is already well beyond the baseline's n=5 anecdote. See SANITY_CHECKS.md
   Check 2 for the full breakdown.
+
+## Extension 4: does the pattern replicate on a real neural network?
+
+The highest-priority, highest-uncertainty addition: does the criterion-
+dependence phenomenon show up outside synthetic benchmark functions, on a
+real (if tiny) network's parameter-space loss landscape? Setup: a 2-2-1
+tanh/sigmoid MLP on XOR (9 parameters), BCE loss, saddle found via a
+constructive tied-unit-symmetry method (global multi-start `fsolve` -- the
+method that works for the benchmark functions -- fails here; see
+`opt2026_ext/xor_network.py`'s docstring for the real debugging this took).
+Full results in `results/ext4_xor_*.csv`.
+
+**What replicates cleanly:** RMSProp again scores **exactly SEE_A = 1.000**
+while GD_fixed is a near-total failure (0.003, 0.0004, 0.000, 0.0001 across
+A/B/C/D) -- an independent confirmation of the mechanistic proposition
+above, on a genuinely different (real, non-benchmark) landscape. This
+saddle happens to be the shallowest curvature tested anywhere in this
+project (lambda_min=-0.0152, versus -2.96 for the shallowest benchmark
+saddle, Levy), so GD's near-total failure is exactly what the proposition's
+1/|lambda| scaling predicts.
+
+**What does NOT replicate:** the Ackley/Rastrigin-style A-B rank
+*inversion* (negative Spearman correlation) does not appear here. A-B rho
+= **+0.96**, and in fact all 6 pairwise criterion correlations are
+positive (0.67-0.96, `results/ext4_xor_spearman.csv`). Kendall's W = **0.84**
+[0.38, 0.91] -- higher concordance across all 4 criteria than on any of the
+5 benchmark functions (0.45-0.62 range).
+
+**Honest reading:** criterion-dependence itself (different criteria giving
+very different absolute SEE values, e.g. RMSProp's 1.000 under A vs. 0.015
+under D) is still clearly present. But the specific *rank-inversion* flavor
+of disagreement that motivated some of the baseline paper's most dramatic
+claims is landscape-specific, not universal -- on this one real network's
+saddle, criteria broadly agree on *ranking* even while disagreeing sharply
+on *magnitude*. This is preliminary evidence from a single network/single
+saddle, not a general claim about neural networks -- but it is a genuine,
+citable contribution either way, exactly per the original framing: the
+result didn't need to be dramatic to be useful, and this one is
+informative precisely because it's a partial, not total, replication.
 
 ## Do the new optimizers behave as expected?
 

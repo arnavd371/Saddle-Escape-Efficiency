@@ -55,11 +55,19 @@ give a strikingly clean check of this exact prediction:
 
 | Function | $\lambda_{\min}$ at saddle | GD_fixed best $A$ | RMSProp best $A$ |
 |---|---|---|---|
+| XOR MLP (Ext 4, real network) | **-0.0152** | **0.003** | **1.000** |
 | Levy | -2.96 | 0.017 | 1.000 |
 | Styblinski | -15.85 | 0.549 | 1.000 |
 | Ackley | -17.11 | 0.305 | 1.000 |
 | Himmelblau | -50.61 | 0.637 | 1.000 |
 | Rastrigin | -392.73 | 0.985 | 1.000 |
+
+The XOR network's saddle (Ext 4, `opt2026_ext/kernels/ext4_nn_saddle/`) is
+the shallowest curvature tested anywhere in this project by an order of
+magnitude, and it slots into the pattern exactly as predicted: RMSProp still
+hits 1.000, GD_fixed collapses to 0.003 (the theory's `1/|lambda|` scaling
+means GD should be at its *worst* exactly here) -- an independent
+confirmation on a genuinely different, non-benchmark-function landscape.
 
 **RMSProp scores exactly 1.000 on every function**, regardless of
 $|\lambda_{\min}|$ ranging over more than two orders of magnitude
