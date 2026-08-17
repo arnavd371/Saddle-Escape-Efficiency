@@ -1,0 +1,6 @@
+function,W,n_items,n_judges,ci_lo,ci_hi
+Himmelblau,0.625,7,4,0.141,0.835
+Ackley,0.482,7,4,0.137,0.764
+Rastrigin,0.452,7,4,0.156,0.728
+Styblinski,0.6,7,4,0.047,0.857
+Levy,0.496,7,4,0.157,0.713

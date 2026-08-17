@@ -1,0 +1,14 @@
+{
+  "id": "arnavd371/ext1-optimizers",
+  "title": "Ext1 Optimizers",
+  "code_file": "ext1_optimizers.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": []
+}

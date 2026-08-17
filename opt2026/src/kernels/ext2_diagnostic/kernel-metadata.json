@@ -1,0 +1,14 @@
+{
+  "id": "arnavd371/ext2-diagnostic",
+  "title": "Ext2 Diagnostic",
+  "code_file": "ext2_diagnostic.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": []
+}

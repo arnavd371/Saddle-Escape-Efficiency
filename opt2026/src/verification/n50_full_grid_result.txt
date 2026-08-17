@@ -1,0 +1,36 @@
+  [current_fix_1e8] GD_fixed done (21.7s elapsed)
+  [current_fix_1e8] Adam done (44.0s elapsed)
+  [current_fix_1e8] RMSProp done (65.8s elapsed)
+  [current_fix_1e8] AdaGrad done (88.0s elapsed)
+  [current_fix_1e8] AdamW done (111.2s elapsed)
+  [current_fix_1e8] SGD_Nesterov done (131.3s elapsed)
+  [current_fix_1e8] Lion done (154.1s elapsed)
+
+=== current_fix_1e8: best-LR SEE per optimizer (A,B,C,D) ===
+  GD_fixed     : 1.000 / 0.248 / 0.791 / 0.087
+  Adam         : 1.000 / 0.205 / 1.000 / 0.205
+  RMSProp      : 1.000 / 1.000 / 1.000 / 0.500
+  AdaGrad      : 1.000 / 0.250 / 1.000 / 0.250
+  AdamW        : 1.000 / 0.203 / 1.000 / 0.203
+  SGD_Nesterov : 1.000 / 0.350 / 0.885 / 0.060
+  Lion         : 0.138 / 0.028 / 0.249 / 0.028
+  A-B rho = +0.612   B-D rho = +0.536   (total 154.1s)
+
+  [permissive_1e15] GD_fixed done (20.8s elapsed)
+  [permissive_1e15] Adam done (43.3s elapsed)
+  [permissive_1e15] RMSProp done (65.1s elapsed)
+  [permissive_1e15] AdaGrad done (86.9s elapsed)
+  [permissive_1e15] AdamW done (109.2s elapsed)
+  [permissive_1e15] SGD_Nesterov done (129.4s elapsed)
+  [permissive_1e15] Lion done (151.5s elapsed)
+
+=== permissive_1e15: best-LR SEE per optimizer (A,B,C,D) ===
+  GD_fixed     : 1.000 / 0.334 / 0.791 / 0.087
+  Adam         : 1.000 / 0.205 / 1.000 / 0.205
+  RMSProp      : 1.000 / 1.000 / 1.000 / 0.500
+  AdaGrad      : 1.000 / 0.250 / 1.000 / 0.250
+  AdamW        : 1.000 / 0.203 / 1.000 / 0.203
+  SGD_Nesterov : 1.000 / 0.438 / 0.885 / 0.060
+  Lion         : 0.138 / 0.028 / 0.249 / 0.028
+  A-B rho = +0.612   B-D rho = +0.429   (total 151.5s)
+

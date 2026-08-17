@@ -1,0 +1,14 @@
+{
+  "id": "arnavd371/see-pipeline-v2-rebuild",
+  "title": "SEE Pipeline v2 Rebuild",
+  "code_file": "main.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "arnavd371/ext2-dimsweep-styblinski",
+  "title": "Ext2 DimSweep Styblinski",
+  "code_file": "ext2_dimsweep_styblinski.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": []
+}

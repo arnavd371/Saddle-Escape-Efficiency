@@ -1,0 +1,14 @@
+{
+  "id": "arnavd371/ext4-nn-saddle",
+  "title": "Ext4 Nn Saddle",
+  "code_file": "ext4_nn_saddle.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": []
+}

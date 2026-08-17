@@ -1,0 +1,45 @@
+[{"stream_name":"stdout","time":10.171404675,"data":"[ext4] device=cuda  torch=2.10.0+cu128  numpy=2.0.2  scipy=1.16.3\n"}
+,{"stream_name":"stdout","time":10.171842865,"data":"\n"}
+,{"stream_name":"stdout","time":10.171860451,"data":"=== Ext4: first real (non-benchmark) loss landscape -- XOR MLP, 9-dim parameter space ===\n"}
+,{"stream_name":"stdout","time":10.171865178000001,"data":"Saddle constructed via tied-unit symmetry (see xor_network.py docstring for why global\n"}
+,{"stream_name":"stdout","time":10.171869221,"data":"multi-start fsolve fails on this saturating landscape).\n"}
+,{"stream_name":"stdout","time":10.946545564000001,"data":"\n"}
+,{"stream_name":"stdout","time":10.946583498,"data":"Fixed (CPU-verified) saddle recomputed on cuda: loss=0.693147  lambda_min=-0.015189  lambda_max=0.462421  r_curv=8.1140\n"}
+,{"stream_name":"stdout","time":10.946587521,"data":"  ACCEPTED AS SADDLE (lmin\u003c-1e-4 and lmax\u003e1e-4): True\n"}
+,{"stream_name":"stdout","time":10.946590841999999,"data":"  (CPU reference values: loss=0.693147 lambda_min=-0.015189 lambda_max=0.462421 -- comparing to catch any residual device-dependent eigenvalue drift)\n"}
+,{"stream_name":"stdout","time":10.961015654,"data":"\n"}
+,{"stream_name":"stdout","time":10.961042262,"data":"Running trial grid: 7 optimizers x 6 LRs = 42 configs, N=200 trials, T=200 steps\n"}
+,{"stream_name":"stdout","time":74.891173499,"data":"  GD_fixed done. (63.9s elapsed)\n"}
+,{"stream_name":"stdout","time":132.534468796,"data":"  Adam done. (121.6s elapsed)\n"}
+,{"stream_name":"stdout","time":187.681578705,"data":"  RMSProp done. (176.7s elapsed)\n"}
+,{"stream_name":"stdout","time":245.841211219,"data":"  AdaGrad done. (234.9s elapsed)\n"}
+,{"stream_name":"stdout","time":304.298520371,"data":"  AdamW done. (293.3s elapsed)\n"}
+,{"stream_name":"stdout","time":362.655571341,"data":"  SGD_Nesterov done. (351.7s elapsed)\n"}
+,{"stream_name":"stdout","time":420.597315221,"data":"  Lion done. (409.6s elapsed)\n"}
+,{"stream_name":"stdout","time":420.603224527,"data":"Raw trial data saved to /kaggle/working/results/raw/ext4_xor_raw_trials.pkl\n"}
+,{"stream_name":"stdout","time":420.603619458,"data":"  GD_fixed     : 0.003 / 0.000 / 0.000 / 0.000\n"}
+,{"stream_name":"stdout","time":420.604152968,"data":"  Adam         : 0.290 / 0.058 / 0.016 / 0.017\n"}
+,{"stream_name":"stdout","time":420.604618111,"data":"  RMSProp      : 1.000 / 0.535 / 0.005 / 0.015\n"}
+,{"stream_name":"stdout","time":420.605008786,"data":"  AdaGrad      : 0.147 / 0.041 / 0.000 / 0.014\n"}
+,{"stream_name":"stdout","time":420.605485138,"data":"  AdamW        : 0.289 / 0.059 / 0.014 / 0.017\n"}
+,{"stream_name":"stdout","time":420.605885104,"data":"  SGD_Nesterov : 0.018 / 0.015 / 0.000 / 0.014\n"}
+,{"stream_name":"stdout","time":420.606256015,"data":"  Lion         : 0.036 / 0.021 / 0.007 / 0.010\n"}
+,{"stream_name":"stdout","time":420.608700071,"data":"\n"}
+,{"stream_name":"stdout","time":420.608724255,"data":"=== The key question: does the criterion-dependence pattern replicate on a real network? ===\n"}
+,{"stream_name":"stdout","time":420.622472542,"data":"  A-B: rho=+0.964  (n=7)\n"}
+,{"stream_name":"stdout","time":420.623394867,"data":"  A-D: rho=+0.857  (n=7)\n"}
+,{"stream_name":"stdout","time":420.624196243,"data":"  B-D: rho=+0.821  (n=7)\n"}
+,{"stream_name":"stdout","time":420.625073722,"data":"  A-C: rho=+0.703  (n=7)\n"}
+,{"stream_name":"stdout","time":420.625908449,"data":"  B-C: rho=+0.667  (n=7)\n"}
+,{"stream_name":"stdout","time":420.626702843,"data":"  C-D: rho=+0.757  (n=7)\n"}
+,{"stream_name":"stdout","time":421.581930532,"data":"\n"}
+,{"stream_name":"stdout","time":421.581974929,"data":"  Kendall's W = 0.843  95% CI [0.384, 0.911]  (n_items=7)\n"}
+,{"stream_name":"stdout","time":421.586609082,"data":"\n"}
+,{"stream_name":"stdout","time":421.586646465,"data":"Ext4 done. Total elapsed: 410.6s. Files in /kaggle/working/results/\n"}
+,{"stream_name":"stderr","time":426.80408239,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":426.805358323,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":427.139413178,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":427.139445747,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":427.886962462,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":429.49706583,"data":"[NbConvertApp] Writing 472104 bytes to __results__.html\n"}
+]
