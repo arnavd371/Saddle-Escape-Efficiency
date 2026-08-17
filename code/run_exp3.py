@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import core
+import algorithm as see
 from nn import xor_data, make_loss_fn, D_PARAM
 
 OUTDIR, FIGDIR = '../results/3_neural_network/tables', '../results/3_neural_network/figures'
@@ -37,16 +38,16 @@ def lambda_fn(Xd):
 DATA = {}
 for o in core.OPTS:
     for lr in LRS:
-        DATA[(o, lr)] = core.run_config(F, s, None, None, None, o, lr, N, TMAX, SEED, FAMS, lambda_fn)
+        DATA[(o, lr)] = see.simulate(F, s, None, None, None, o, lr, N, TMAX, SEED, FAMS, lambda_fn)
     print(o, 'done', round(time.time() - t0, 1))
 
 best_rows = []
 for o in core.OPTS:
     rec = {'optimizer': o}
     for fam in FAMS:
-        k = core.headline_idx(fam)
+        k = see.headline_idx(fam)
         rec[f'best_{fam}'] = max(
-            core.see_pt(DATA[(o, lr)][0][k], DATA[(o, lr)][1][k]) for lr in LRS)
+            see.see(DATA[(o, lr)][0][k], DATA[(o, lr)][1][k]) for lr in LRS)
     best_rows.append(rec)
 pd.DataFrame(best_rows).to_csv(f'{OUTDIR}/best_lr.csv', index=False)
 

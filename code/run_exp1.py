@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import core
+import algorithm as see
 
 OUTDIR, FIGDIR = '../results/1_two_dimensional/tables', '../results/1_two_dimensional/figures'
 os.makedirs(OUTDIR, exist_ok=True)
@@ -47,7 +48,7 @@ for name in GEOM:
     g, lf = GEOM[name], lambda_fn_2d(F)
     for o in core.OPTS:
         for lr in LRS:
-            DATA[(name, o, lr)] = core.run_config(
+            DATA[(name, o, lr)] = see.simulate(
                 F, g['s'], g['v'], g['r_curv'], g['f_s'], o, lr, N, TMAX, SEED, FAMS, lf)
     print(name, 'done', round(time.time() - t0, 1))
 
@@ -57,8 +58,8 @@ for name in GEOM:
         e, s = DATA[(name, o, 0.2)]
         rec = {'function': name, 'optimizer': o}
         for fam in FAMS:
-            k = core.headline_idx(fam)
-            val, lo, hi = core.see_ci(e[k], s[k], rng)
+            k = see.headline_idx(fam)
+            val, lo, hi = see.see_ci(e[k], s[k], rng)
             rec[f'SEE_{fam}'] = val
             rec[f'CI_lo_{fam}'] = lo
             rec[f'CI_hi_{fam}'] = hi
@@ -70,9 +71,9 @@ for name in GEOM:
     for o in core.OPTS:
         rec = {'function': name, 'optimizer': o}
         for fam in FAMS:
-            k = core.headline_idx(fam)
+            k = see.headline_idx(fam)
             rec[f'best_{fam}'] = max(
-                core.see_pt(DATA[(name, o, lr)][0][k], DATA[(name, o, lr)][1][k]) for lr in LRS)
+                see.see(DATA[(name, o, lr)][0][k], DATA[(name, o, lr)][1][k]) for lr in LRS)
         best_rows.append(rec)
 pd.DataFrame(best_rows).to_csv(f'{OUTDIR}/best_lr.csv', index=False)
 
@@ -85,7 +86,7 @@ for name in GEOM:
         ia, ib = FAMS.index(a), FAMS.index(b)
         rho = stats.spearmanr(mat[:, ia], mat[:, ib]).correlation
         spear_rows.append({'function': name, 'pair': f'{a}-{b}', 'rho': rho})
-    kw_rows.append({'function': name, 'W': core.kendall_w(mat.T), 'lmin': GEOM[name]['lmin']})
+    kw_rows.append({'function': name, 'W': see.kendall_w(mat.T), 'lmin': GEOM[name]['lmin']})
 pd.DataFrame(spear_rows).to_csv(f'{OUTDIR}/spearman.csv', index=False)
 pd.DataFrame(kw_rows).to_csv(f'{OUTDIR}/kendall_w.csv', index=False)
 
@@ -95,8 +96,8 @@ for fam, ps in [('A', [1.5, 2.0, 3.0]), ('B', [1e-2, 1e-3, 1e-4]),
     for name in GEOM:
         rank = {}
         for p in ps:
-            k = core.VAR.index((fam, p))
-            rank[p] = [max(core.see_pt(DATA[(name, o, lr)][0][k], DATA[(name, o, lr)][1][k])
+            k = see.VAR.index((fam, p))
+            rank[p] = [max(see.see(DATA[(name, o, lr)][0][k], DATA[(name, o, lr)][1][k])
                            for lr in LRS) for o in core.OPTS]
         rho = stats.spearmanr(rank[ps[0]], rank[ps[-1]]).correlation
         stab_rows.append({'family': fam, 'function': name, 'rho': rho})

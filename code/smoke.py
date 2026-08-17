@@ -2,6 +2,7 @@ import time
 import numpy as np
 import torch
 import core
+import algorithm as see
 
 t0 = time.time()
 for name in core.FUNCS2D:
@@ -28,11 +29,11 @@ def lambda_fn(Xd):
     lmin, _ = core.lanczos_extremes(F, Xd, k=20)
     return lmin
 
-esc, stp = core.run_config(
+esc, stp = see.simulate(
     F, s0, v0, r_curv, f_s, 'Adam', 0.1,
     N=20, Tmax=30, seed=42, families=['A', 'B', 'C', 'D'], lambda_fn=lambda_fn)
-k = core.headline_idx('A')
+k = see.headline_idx('A')
 print('esc frac A', esc[k].mean())
-pt, lo, hi = core.see_ci(esc[k], stp[k], np.random.default_rng(0))
+pt, lo, hi = see.see_ci(esc[k], stp[k], np.random.default_rng(0))
 print('SEE_A', pt, lo, hi)
 print('total', round(time.time() - t0, 1))

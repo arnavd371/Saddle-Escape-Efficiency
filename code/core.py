@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from scipy import optimize, stats
+from scipy import optimize
 
 torch.set_default_dtype(torch.float64)
 
@@ -188,66 +188,3 @@ def make_opt(name, P, lr):
     if name == 'SGD_mom':
         return torch.optim.SGD([P], lr=lr, momentum=0.9)
     raise ValueError(name)
-
-VAR = [
-    ('A', 1.5), ('A', 2.0), ('A', 3.0),
-    ('B', 1e-2), ('B', 1e-3), ('B', 1e-4),
-    ('C', 0.5), ('C', 1.0), ('C', 2.0),
-    ('D', 0.25), ('D', 0.5), ('D', 1.0),
-]
-HEAD = {'A': 2.0, 'B': 1e-3, 'C': 1.0, 'D': 0.5}
-
-def headline_idx(fam):
-    return VAR.index((fam, HEAD[fam]))
-
-def run_config(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lambda_fn):
-    torch.manual_seed(seed)
-    X = (s[None] + 0.1 * torch.randn(N, s.shape[0], device=s.device)).requires_grad_(True)
-    opt = make_opt(opt_name, X, lr)
-    idxs = [k for k, (fam, _) in enumerate(VAR) if fam in families]
-    esc = {k: np.zeros(N, bool) for k in idxs}
-    stp = {k: np.full(N, Tmax + 1) for k in idxs}
-    for t in range(Tmax):
-        opt.zero_grad()
-        F(X).sum().backward()
-        opt.step()
-        Xd = X.detach().clone()
-        Xd = torch.nan_to_num(Xd, nan=1e4, posinf=1e4, neginf=-1e4)
-        lmin = lambda_fn(Xd) if ('B' in families or 'D' in families) else None
-        fv = F(Xd).cpu().numpy() if 'D' in families else None
-        with torch.no_grad():
-            dist = (Xd - s).norm(dim=1).cpu().numpy() if 'A' in families else None
-            proj = torch.abs((Xd - s) @ v).cpu().numpy() if 'C' in families else None
-        for k in idxs:
-            fam, p = VAR[k]
-            if fam == 'A':
-                cond = dist > p
-            elif fam == 'B':
-                cond = lmin > -p
-            elif fam == 'C':
-                cond = proj > p * r_curv
-            else:
-                cond = (fv < f_s - p) & (lmin > -1e-3)
-            new = (~esc[k]) & cond
-            stp[k][new] = t + 1
-            esc[k] |= new
-    return esc, stp
-
-def see_pt(e, s):
-    return (e.mean() / s[e].mean()) if e.any() else 0.0
-
-def see_ci(e, s, rng, B=2000):
-    n = len(e)
-    idx = rng.integers(0, n, (B, n))
-    E, S = e[idx], s[idx]
-    cnt = E.sum(1)
-    tau = np.where(cnt > 0, np.where(E, S, 0).sum(1) / np.maximum(cnt, 1), np.nan)
-    vals = np.where(cnt > 0, E.mean(1) / tau, 0.0)
-    lo, hi = np.percentile(vals, [2.5, 97.5])
-    return see_pt(e, s), lo, hi
-
-def kendall_w(mat):
-    R = np.array([stats.rankdata(row) for row in mat])
-    m, n = R.shape
-    S = ((R.sum(0) - R.sum() / n) ** 2).sum()
-    return 12 * S / (m ** 2 * (n ** 3 - n))

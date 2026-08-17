@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import core
+import algorithm as see
 
 OUTDIR, FIGDIR = '../results/2_higher_dimension/tables', '../results/2_higher_dimension/figures'
 os.makedirs(OUTDIR, exist_ok=True)
@@ -46,7 +47,7 @@ for (name, d) in GEOM:
     g, lf = GEOM[(name, d)], lambda_fn_nd(F, d)
     for o in core.OPTS:
         for lr in LRS:
-            DATA[(name, d, o, lr)] = core.run_config(
+            DATA[(name, d, o, lr)] = see.simulate(
                 F, g['s'], None, None, None, o, lr, N, TMAX, SEED, FAMS, lf)
     print(name, d, 'done', round(time.time() - t0, 1))
 
@@ -55,9 +56,9 @@ for (name, d) in GEOM:
     for o in core.OPTS:
         rec = {'function': name, 'dim': d, 'optimizer': o}
         for fam in FAMS:
-            k = core.headline_idx(fam)
+            k = see.headline_idx(fam)
             rec[f'best_{fam}'] = max(
-                core.see_pt(DATA[(name, d, o, lr)][0][k], DATA[(name, d, o, lr)][1][k]) for lr in LRS)
+                see.see(DATA[(name, d, o, lr)][0][k], DATA[(name, d, o, lr)][1][k]) for lr in LRS)
         best_rows.append(rec)
 pd.DataFrame(best_rows).to_csv(f'{OUTDIR}/best_lr.csv', index=False)
 
