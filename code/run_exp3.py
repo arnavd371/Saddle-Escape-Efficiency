@@ -1,4 +1,3 @@
-"""Exp 3 — XOR MLP saddle, criteria A and B."""
 import os, time
 import numpy as np
 import pandas as pd
@@ -17,7 +16,7 @@ os.makedirs(FIGDIR, exist_ok=True)
 SEED, N, TMAX = 42, 50, 300
 LRS = [0.001, 0.005, 0.01, 0.05, 0.1]
 FAMS = ['A', 'B']
-DOM_L = 4.0  # covers the saturated-tanh region where random inits land
+DOM_L = 4.0
 t0 = time.time()
 
 X, y = xor_data(seed=SEED)

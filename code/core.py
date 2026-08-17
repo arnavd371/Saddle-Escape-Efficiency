@@ -1,9 +1,3 @@
-"""Saddle Escape Efficiency — shared primitives.
-
-SEE = P_esc / mean first hitting time. Trajectories are shared across
-criteria; only the hitting condition changes. Float64 throughout: the
-saddle tests sit near 1e-6 and float32 noise is enough to flip them.
-"""
 import numpy as np
 import torch
 from scipy import optimize, stats
@@ -12,9 +6,6 @@ torch.set_default_dtype(torch.float64)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if DEVICE.type == 'cuda':
-    # Kaggle's default P100 (sm_60) advertises CUDA but the preinstalled
-    # PyTorch wheel needs sm_70+. Probe with a real autograd round-trip
-    # instead of trusting is_available().
     try:
         x = torch.ones(2, 2, device=DEVICE, requires_grad=True)
         (x * x).sum().backward()
@@ -23,7 +14,6 @@ if DEVICE.type == 'cuda':
         print(f'cuda unusable ({e}), falling back to cpu')
         DEVICE = torch.device('cpu')
 print('device:', DEVICE)
-
 
 def f_himmelblau(X):
     return (X[:, 0] ** 2 + X[:, 1] - 11) ** 2 + (X[:, 0] + X[:, 1] ** 2 - 7) ** 2
@@ -57,7 +47,6 @@ def f_schwefel(X):
     d = X.shape[1]
     return 418.9829 * d - (X * torch.sin(torch.sqrt(torch.abs(X)))).sum(1)
 
-# Rosenbrock is unimodal — no saddle, so a saddle-escape score is meaningless.
 FUNCS2D = {
     'Himmelblau': (f_himmelblau, 6.0),
     'Ackley': (f_ackley, 5.0),
@@ -69,21 +58,17 @@ FUNCS2D = {
     'Schwefel': (f_schwefel, 500.0),
 }
 
-
 def grad(F, X):
     X = X.detach().clone().requires_grad_(True)
     F(X).sum().backward()
     return X.grad.detach()
 
 def hvp(F, X, v):
-    # F(X).sum() decouples batch rows, so two autograd passes still give
-    # per-row H@v rather than a cross-row mixture.
     X = X.detach().clone().requires_grad_(True)
     g = torch.autograd.grad(F(X).sum(), X, create_graph=True)[0]
     return torch.autograd.grad((g * v).sum(), X)[0].detach()
 
 def hessian(F, X):
-    # d HVP calls. Fine for d=2; at d=50 use lanczos_extremes instead.
     n, d = X.shape
     cols = []
     for i in range(d):
@@ -93,9 +78,6 @@ def hessian(F, X):
     return torch.stack(cols, -1)
 
 def safe_eigh(H, eigenvectors=True):
-    # Diverged (clamped) points make Hessians that cuSOLVER refuses;
-    # CPU LAPACK usually just returns garbage. Retry rows one at a time
-    # and leave failures as NaN rather than killing the batch.
     fn = torch.linalg.eigh if eigenvectors else torch.linalg.eigvalsh
     try:
         return fn(H)
@@ -115,13 +97,11 @@ def safe_eigh(H, eigenvectors=True):
         return (evals, evecs) if eigenvectors else evals
 
 def eigh_min(F, X):
-    # Smallest-eigenvalue eigenvector. Columns of torch.linalg.eigh, no 2x2 shortcut.
     H = hessian(F, X)
     evals, evecs = safe_eigh(H)
     return evals[:, 0], evals[:, -1], evecs[:, :, 0]
 
 def lanczos_extremes(F, X, k=25, seed=0):
-    # Extreme eigenvalues of the HVP operator. k steps vs d dense columns.
     n, d = X.shape
     g = torch.Generator().manual_seed(seed)
     v = torch.randn(n, d, generator=g).to(X.device)
@@ -150,7 +130,6 @@ def lanczos_extremes(F, X, k=25, seed=0):
     ev = safe_eigh(T, eigenvectors=False)
     return ev[:, 0].cpu().numpy(), ev[:, -1].cpu().numpy()
 
-
 def _refine(F, cand, L, d, keep, use_lanczos, max_try=None):
     def gf(p):
         x = torch.tensor(p)[None].requires_grad_(True)
@@ -172,8 +151,6 @@ def _refine(F, cand, L, d, keep, use_lanczos, max_try=None):
         else:
             lmn, lmx, _ = eigh_min(F, st)
             lmin, lmax = lmn.item(), lmx.item()
-        # 1e-4 keeps numerically flat critical points out; 0.3 is a cheap
-        # duplicate radius in the scaled domain.
         if lmin < -1e-4 and lmax > 1e-4 and all(np.linalg.norm(sol - q) > 0.3 for q in found):
             found.append(sol)
     found.sort(key=lambda s: np.linalg.norm(s))
@@ -184,8 +161,6 @@ def find_saddles_2d(F, L, grid=240, n_cand=800, keep=3):
     G = torch.tensor(np.stack(np.meshgrid(xs, xs), -1).reshape(-1, 2))
     gn = grad(F, G).norm(dim=1).cpu().numpy()
     Gnp = G.cpu().numpy()
-    # gn primary; x then y as a lex tie-break so the same saddle is picked
-    # on CPU and GPU, not whichever candidate numpy happens to sort first.
     order = np.lexsort((Gnp[:, 1], Gnp[:, 0], gn))
     return _refine(F, Gnp[order[:n_cand]], L, 2, keep, use_lanczos=False)
 
@@ -195,9 +170,7 @@ def find_saddles_nd(F, d, L, n_init=5000, n_cand=800, keep=3, seed=0, max_try=20
     gn = grad(F, torch.tensor(Gnp)).norm(dim=1).cpu().numpy()
     keys = tuple(Gnp[:, i] for i in range(d - 1, -1, -1)) + (gn,)
     order = np.lexsort(keys)
-    # max_try caps fsolve+Lanczos: at d=50 each refinement is ~30 HVPs.
     return _refine(F, Gnp[order[:n_cand]], L, d, keep, use_lanczos=True, max_try=max_try)
-
 
 OPTS = ['GD', 'Adam', 'RMSProp', 'AdaGrad', 'AdamW', 'SGD_mom']
 
@@ -209,13 +182,12 @@ def make_opt(name, P, lr):
     if name == 'RMSProp':
         return torch.optim.RMSprop([P], lr=lr, alpha=0.99, eps=1e-8)
     if name == 'AdaGrad':
-        return torch.optim.Adagrad([P], lr=lr, eps=1e-8)  # PyTorch default is 1e-10
+        return torch.optim.Adagrad([P], lr=lr, eps=1e-8)
     if name == 'AdamW':
         return torch.optim.AdamW([P], lr=lr, weight_decay=0.01)
     if name == 'SGD_mom':
         return torch.optim.SGD([P], lr=lr, momentum=0.9)
     raise ValueError(name)
-
 
 VAR = [
     ('A', 1.5), ('A', 2.0), ('A', 3.0),
@@ -240,8 +212,6 @@ def run_config(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lamb
         F(X).sum().backward()
         opt.step()
         Xd = X.detach().clone()
-        # 1e4 is already far past any escape threshold. 1e6 made Hessians
-        # ill-conditioned enough for GPU eigh to throw.
         Xd = torch.nan_to_num(Xd, nan=1e4, posinf=1e4, neginf=-1e4)
         lmin = lambda_fn(Xd) if ('B' in families or 'D' in families) else None
         fv = F(Xd).cpu().numpy() if 'D' in families else None
@@ -255,7 +225,6 @@ def run_config(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lamb
             elif fam == 'B':
                 cond = lmin > -p
             elif fam == 'C':
-                # r_curv = 1/sqrt(|lmin|) is the quadratic unstable-manifold scale
                 cond = proj > p * r_curv
             else:
                 cond = (fv < f_s - p) & (lmin > -1e-3)
@@ -263,7 +232,6 @@ def run_config(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lamb
             stp[k][new] = t + 1
             esc[k] |= new
     return esc, stp
-
 
 def see_pt(e, s):
     return (e.mean() / s[e].mean()) if e.any() else 0.0
@@ -279,7 +247,6 @@ def see_ci(e, s, rng, B=2000):
     return see_pt(e, s), lo, hi
 
 def kendall_w(mat):
-    # mat: (n_judges, n_items). rankdata averages ties.
     R = np.array([stats.rankdata(row) for row in mat])
     m, n = R.shape
     S = ((R.sum(0) - R.sum() / n) ** 2).sum()

@@ -1,8 +1,3 @@
-"""XOR MLP used as a small real loss surface (exp 3).
-
-Hidden layer has no bias: that keeps the flattened parameter count at 25
-(W1 2x8, W2 8x1, b2) and avoids a degenerate all-bias saddle.
-"""
 import torch
 
 torch.set_default_dtype(torch.float64)

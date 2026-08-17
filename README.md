@@ -73,7 +73,7 @@ list but no verified saddle was found, so it is dropped from the tables.
   and Rastrigin 10D (`−0.74`). Ackley loses the inversion with dimension
   (`−0.81 → +0.14 → +0.78`). XOR-MLP: `ρ = +0.81`.
 - Rastrigin 50D: every optimizer has `best_A = 1`, so Spearman is undefined.
-- Curvature–sharpness on the original five functions:
+- Curvature-sharpness on the original five functions:
   `ρ(|λ_min|, W) = −0.7`, exact permutation `p = 0.2333` (n=5).
 - Criterion C saturates on Himmelblau, Ackley, Rastrigin, Styblinski
   (4/6 optimizers at 1.0). It still splits Levy, Beale, and Schwefel.

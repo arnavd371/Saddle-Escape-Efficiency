@@ -1,4 +1,3 @@
-"""Exp 2 — Rastrigin / Ackley at d=10 and d=50. Criteria A and B only."""
 import os, time
 import numpy as np
 import pandas as pd

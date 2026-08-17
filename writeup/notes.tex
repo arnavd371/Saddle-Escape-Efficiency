@@ -31,7 +31,7 @@ it is not meaningful.
 Escape direction: $\texttt{torch.linalg.eigh}$ on $H(x_s)$; take the column
 for the smallest eigenvalue; $\ell_2$-normalize. No $2\times 2$ closed form,
 no axis fallback. Dense eigh is only used in 2D. In $d\ge 10$ and on the MLP,
-$\lambda_{\min},\lambda_{\max}$ come from Lanczos on Hessian--vector products
+$\lambda_{\min},\lambda_{\max}$ come from Lanczos on Hessian-vector products
 ($k=\min(30,d)$, $k=25$ on the net).
 
 Saddle search is deterministic. Candidates are sorted by gradient norm, then
@@ -105,7 +105,7 @@ Rastrigin  & 3 & $(-0.503,\ 0.000)$ & $-392.73$ & $0.050$ \\
 Styblinski & 3 & $(0.157,\ 2.747)$ & $-15.85$ & $0.251$ \\
 Levy       & 3 & $(1.000,-2.257)$ & $-2.96$ & $0.582$ \\
 Beale      & 2 & $(0.000,\ 1.000)$ & $-27.75$ & $0.190$ \\
-Booth      & 0 & --- & --- & --- \\
+Booth      & 0 & -- & -- & -- \\
 Schwefel   & 3 & $(-5.239,\ 5.239)$ & $-0.40$ & $1.574$ \\
 \bottomrule
 \end{tabular}
@@ -177,7 +177,7 @@ Schwefel   & GD      & $0.047$ & $0.035$ & $0.050$ & $0.035$ \\
 \small
 \begin{tabular}{lcccccc}
 \toprule
-Function & A--B & A--C & A--D & B--C & B--D & C--D \\
+Function & A-B & A-C & A-D & B-C & B-D & C-D \\
 \midrule
 Himmelblau & $+0.77$ & $-0.41$ & $+0.77$ & $-0.41$ & $+1.00$ & $-0.41$ \\
 Ackley     & $-0.81$ & $-0.45$ & $-0.81$ & $+0.85$ & $+1.00$ & $+0.85$ \\
@@ -303,7 +303,7 @@ Ackley    & GD      & 50 & $0.148$ & $0.095$ \\
 \toprule
  & $d=2$ & $d=10$ & $d=50$ \\
 \midrule
-Rastrigin & $-0.79$ & $-0.74$ & --- \\
+Rastrigin & $-0.79$ & $-0.74$ & -- \\
 Ackley    & $-0.81$ & $+0.14$ & $+0.78$ \\
 \bottomrule
 \end{tabular}
@@ -340,7 +340,7 @@ SGD\_mom& $0.006$ & $0.000$ \\
 $\rho(A,B)=+0.81$. No rank inversion. RMSProp dominates distance; curvature
 escape is near zero for all six.
 
-\section{Curvature--sharpness}
+\section{Curvature-sharpness}
 
 Spearman correlation of $|\lambda_{\min}|$ with Kendall's $W$ on the original
 five functions (Himmelblau, Ackley, Rastrigin, Styblinski, Levy). Exact
@@ -359,7 +359,7 @@ undefined because A saturates. On Ackley it \emph{disappears} with dimension
 ($-0.81\to +0.14\to +0.78$). On the XOR-MLP, $\rho=+0.81$: no inversion.
 
 \paragraph{Where do AdamW and SGD+momentum rank under B versus A?}
-AdamW: mean $\mathrm{best}_A=0.108$ (typically $4$--$6/6$),
+AdamW: mean $\mathrm{best}_A=0.108$ (typically $4$-$6/6$),
 mean $\mathrm{best}_B=0.355$, and $1/6$ on Rastrigin and Levy under B.
 SGD\_mom: mean $\mathrm{best}_A=0.475$ (typically $2/6$),
 mean $\mathrm{best}_B=0.307$, and $6/6$ on Ackley and Rastrigin under B.
@@ -387,13 +387,13 @@ It discriminates on Levy $[0.291,1.000]$ ($1/6$ at $1.0$),
 Beale $[0.350,0.897]$ ($0/6$ at $1.0$),
 Schwefel $[0.050,1.000]$ ($1/6$ at $1.0$).
 
-\paragraph{Curvature--sharpness?}
+\paragraph{Curvature-sharpness?}
 $\rho=-0.7$, exact $p=0.2333$, $n=5$.
 
 \paragraph{Do the three new functions match the original five?}
 Booth: no saddle, excluded. Beale $\rho(A,B)=+0.37$, $W=0.593$.
 Schwefel $\rho(A,B)=+0.49$, $W=0.657$.
-They follow Himmelblau/Styblinski (positive A--B), not Ackley/Rastrigin
+They follow Himmelblau/Styblinski (positive A-B), not Ackley/Rastrigin
 (inversion). C is less saturated on the new functions than on the original
 sharp 2D set. RMSProp still dominates A.
 

@@ -1,4 +1,3 @@
-"""Cross-experiment summary. Reads CSVs written by run_exp1/2/3."""
 import itertools
 import numpy as np
 import pandas as pd
@@ -8,7 +7,6 @@ ORIGINAL5 = ['Himmelblau', 'Ackley', 'Rastrigin', 'Styblinski', 'Levy']
 NEW3 = ['Beale', 'Booth', 'Schwefel']
 
 def exact_spearman_p(x, y):
-    # n=5: enumerate the permutation null rather than scipy's t approximation.
     x, y = np.asarray(x), np.asarray(y)
     n = len(x)
     rho0 = stats.spearmanr(x, y).correlation

@@ -1,4 +1,3 @@
-"""Cheap sanity checks. Not the full experiment."""
 import time
 import numpy as np
 import torch

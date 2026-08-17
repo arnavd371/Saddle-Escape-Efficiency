@@ -1,4 +1,3 @@
-"""Exp 1 — eight 2D functions, 6 optimizers, 4 criteria, LR sweep."""
 import os, time
 import numpy as np
 import pandas as pd
