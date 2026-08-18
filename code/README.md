@@ -8,7 +8,8 @@
 4. `run_exp2.py`: 10D / 50D
 5. `nn.py` then `run_exp3.py`: XOR MLP
 6. `run_analysis.py`: printed summary
-7. `smoke.py`: short check
+7. `run_medal.py`: mechanism, shared vs independent, A vs B selection
+8. `smoke.py`: short check
 
 ```bash
 python algorithm.py

@@ -1,0 +1,5 @@
+function,rho_AB_shared,rho_AB_independent,bestA_shared,bestB_shared,bestA_independent,bestB_independent,bestA_flip,bestB_flip,pair_disagree_shared,pair_disagree_independent
+Himmelblau,0.8986451052612952,0.8116794499134278,RMSProp,RMSProp,RMSProp,SGD_mom,False,True,False,True
+Ackley,-0.7589709258986453,-0.7589709258986453,RMSProp,AdaGrad,RMSProp,AdaGrad,False,False,True,True
+Rastrigin,-0.7514691493021796,-0.7869910029407438,RMSProp,Adam,RMSProp,Adam,False,False,True,True
+Levy,0.23190841426097938,0.2571428571428572,RMSProp,RMSProp,RMSProp,RMSProp,False,False,False,False

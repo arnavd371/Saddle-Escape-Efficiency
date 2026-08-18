@@ -23,31 +23,55 @@ def oracle(fam, p, dist, lmin, proj, fv, r_curv, f_s):
         return proj > p * r_curv
     return (fv < f_s - p) & (lmin > -1e-3)
 
-def simulate(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lambda_fn):
+def simulate(F, s, v, r_curv, f_s, opt_name, lr, N, Tmax, seed, families, lambda_fn, extra=False):
     torch.manual_seed(seed)
     X = (s[None] + 0.1 * torch.randn(N, s.shape[0], device=s.device)).requires_grad_(True)
     opt = core.make_opt(opt_name, X, lr)
     idxs = [k for k, (fam, _) in enumerate(VAR) if fam in families]
     esc = {k: np.zeros(N, bool) for k in idxs}
     stp = {k: np.full(N, Tmax + 1) for k in idxs}
+    kA = headline_idx('A') if 'A' in families else None
+    kB = headline_idx('B') if 'B' in families else None
+    align_at_A = np.full(N, np.nan)
+    b_when_A = np.zeros(N, bool)
     for t in range(Tmax):
         opt.zero_grad()
         F(X).sum().backward()
         opt.step()
         Xd = X.detach().clone()
         Xd = torch.nan_to_num(Xd, nan=1e4, posinf=1e4, neginf=-1e4)
-        lmin = lambda_fn(Xd) if ('B' in families or 'D' in families) else None
-        fv = F(Xd).cpu().numpy() if 'D' in families else None
+        need_l = ('B' in families or 'D' in families or extra)
+        lmin = lambda_fn(Xd) if need_l else None
+        fv = F(Xd).cpu().numpy() if ('D' in families or extra) else None
         with torch.no_grad():
-            dist = (Xd - s).norm(dim=1).cpu().numpy() if 'A' in families else None
-            proj = torch.abs((Xd - s) @ v).cpu().numpy() if 'C' in families else None
+            delta = (Xd - s)
+            dist = delta.norm(dim=1).cpu().numpy() if ('A' in families or extra or v is not None) else None
+            if v is not None and (extra or 'C' in families or 'A' in families):
+                proj = torch.abs(delta @ v).cpu().numpy()
+            else:
+                proj = None
         for k in idxs:
             fam, p = VAR[k]
             cond = oracle(fam, p, dist, lmin, proj, fv, r_curv, f_s)
             new = (~esc[k]) & cond
             stp[k][new] = t + 1
             esc[k] |= new
-    return esc, stp
+        if extra and kA is not None and proj is not None and dist is not None:
+            newA = (stp[kA] == t + 1)
+            if newA.any():
+                align_at_A[newA] = proj[newA] / np.maximum(dist[newA], 1e-12)
+                if kB is not None:
+                    b_when_A[newA] = esc[kB][newA]
+    if not extra:
+        return esc, stp
+    info = {
+        'align_at_A': align_at_A,
+        'b_when_A': b_when_A,
+        'final_lmin': None if lmin is None else np.asarray(lmin),
+        'final_f': None if fv is None else np.asarray(fv),
+        'final_dist': None if dist is None else np.asarray(dist),
+    }
+    return esc, stp, info
 
 run_config = simulate
 
