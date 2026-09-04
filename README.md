@@ -58,8 +58,12 @@ is step 3.
 | `code/run_exp1.py` | 2D clients (8 functions, 6 optimizers, 4 tests). |
 | `code/run_exp2.py` | 10D / 50D clients. |
 | `code/run_exp3.py` | XOR MLP client. |
-| `results/` | Tables and figures from the Tesla T4 run. |
-| `writeup/notes.tex` | Numbers and CIs. |
+| `code/run_medal.py` | Mechanism, shared vs independent, A vs B selection. |
+| `results/1_two_dimensional/` | T4 tables and figures (8 functions). |
+| `results/2_higher_dimension/` | Rastrigin / Ackley at 10D and 50D. |
+| `results/3_neural_network/` | XOR MLP. |
+| `results/4_medal/` | Mechanism, protocol, and selection tables. |
+| `writeup/notes.tex` | Numbers and CIs from the T4 run. |
 | `original_may2026/` | Earlier notebook. |
 
 ## How to run
@@ -73,10 +77,13 @@ python run_exp1.py
 python run_exp2.py
 python run_exp3.py
 python run_analysis.py
+python run_medal.py
 ```
 
 `python algorithm.py` scores GD and Adam on Himmelblau (short check).
-The tables in `results/` are from the T4 run (16 August 2026, ~77 min).
+`results/1_two_dimensional/` through `3_neural_network/` are from the T4 run
+(16 August 2026, ~77 min). `results/4_medal/` is the follow-up
+(N=80, T=120, 4 functions).
 
 Needs: `torch`, `numpy`, `pandas`, `scipy`, `matplotlib` (`requirements.txt`).
 `SEED = 42`.
@@ -93,7 +100,42 @@ verified saddle and is dropped from the tables.
   and Rastrigin 10D (`-0.74`). Ackley loses the inversion with dimension
   (`-0.81 -> +0.14 -> +0.78`). XOR-MLP: `rho = +0.81`.
 - Rastrigin 50D: every optimizer has `best_A = 1`, so Spearman is undefined.
-- Curvature-sharpness on the original five functions:
-  `rho(|lambda_min|, W) = -0.7`, exact permutation `p = 0.2333` (n=5).
 - Test C saturates on Himmelblau, Ackley, Rastrigin, Styblinski
   (4/6 optimizers at 1.0). It still splits Levy, Beale, and Schwefel.
+
+On Ackley, A ranks RMSProp first (`SEE_A = 1.00`) and AdaGrad last (`0.00`);
+B ranks AdaGrad first (`SEE_B = 0.44`). On Rastrigin, A ranks RMSProp first
+(`1.00`) and Adam last (`0.00`); B ranks Adam first (`0.71`).
+
+## Follow-up (`results/4_medal/`)
+
+N=80, T=120, lrs `{0.01, 0.1, 0.2}`, functions Himmelblau, Ackley, Rastrigin, Levy.
+
+Mechanism: mean alignment with `v_min` at the first A-hit is high on
+Himmelblau (`0.95`) and Levy (`0.97`), lower on Ackley (`0.67`) and
+Rastrigin (`0.69`). The inversion functions leave off the unstable axis.
+
+Shared vs independent paths:
+
+| Function | rho shared | rho independent | Best-B flip |
+|---|---|---|---|
+| Himmelblau | +0.90 | +0.81 | RMSProp to SGD_mom |
+| Ackley | -0.76 | -0.76 | no |
+| Rastrigin | -0.75 | -0.79 | no |
+| Levy | +0.23 | +0.26 | no |
+
+Independent runs can change the B-winner on Himmelblau. The Ackley and
+Rastrigin inversions stay.
+
+Selection (argmax SEE_A vs argmax SEE_B):
+
+| Function | Pick A | Pick B | Outcome |
+|---|---|---|---|
+| Rastrigin | RMSProp, f=16.9 | Adam, f=0.52 | B-pick ~30x lower loss |
+| Ackley | RMSProp, 41% leave saddle | AdaGrad, 100% leave | A-pick often still has negative curvature |
+| Levy | RMSProp lr=0.2, f=3.49 | RMSProp lr=0.1, f=0.44 | same trainer, B picks the better step size |
+| Himmelblau | RMSProp | RMSProp | same pick |
+
+A does not select the trainer that leaves the saddle. On Rastrigin the two
+picks differ by a factor of about 30 in final f. On Ackley, AdaGrad's final
+f is not better, so B is not a general loss minimizer.

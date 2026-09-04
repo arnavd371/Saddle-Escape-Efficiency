@@ -13,6 +13,8 @@
 
 ```bash
 python algorithm.py
+python run_medal.py
 ```
 
 Output from the experiment scripts goes to `../results/`.
+`run_medal.py` writes `../results/4_medal/`.
