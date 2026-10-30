@@ -64,6 +64,7 @@ is step 3.
 | `results/3_neural_network/` | XOR MLP. |
 | `results/4_medal/` | Mechanism, protocol, and selection tables. |
 | `writeup/notes.tex` | Numbers and CIs from the T4 run. |
+| `writeup/ST_Yau_2026_Research_Report.pdf` | Full research report submitted to the 2026 S.T. Yau High School Science Award (Asia). |
 | `original_may2026/` | Earlier notebook. |
 
 ## How to run
